@@ -1,0 +1,8 @@
+{
+  "original_text": "Hello world.",
+  "tokens": ["Hello", " ", "world", "."],
+  "token_ids": [10, 1, 11, 2],
+  "token_count": 4,
+  "chars_per_token": 3.0,
+  "language": "en"
+}
