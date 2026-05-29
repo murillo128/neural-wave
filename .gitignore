@@ -1,0 +1,7 @@
+# CMake build artifacts
+build/
+**/build/
+
+# CTest / CMake generated files
+Testing/
+CMakeUserPresets.json
