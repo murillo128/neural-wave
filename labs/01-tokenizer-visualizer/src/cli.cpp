@@ -6,6 +6,7 @@
 #include <memory>
 #include <stdexcept>
 #include <string>
+#include <utility>
 
 #include "tokenizer_visualizer/bpe_tokenizer.h"
 #include "tokenizer_visualizer/file_utils.h"
@@ -66,6 +67,7 @@ int RunCli(int argc, char** argv) {
   auto vocab = ReadVocabJson(default_vocab);
   auto merges = ReadMergesFile(default_merges);
 
+  std::size_t vocab_size = vocab.size();
   std::unique_ptr<Tokenizer> tokenizer;
   if (model == "simple") tokenizer = std::make_unique<SimpleTokenizer>(vocab);
   else if (model == "bpe") tokenizer = std::make_unique<BPETokenizer>(vocab, merges);
@@ -73,7 +75,9 @@ int RunCli(int argc, char** argv) {
     std::cerr << "Warning: tiktoken mode maps to educational BPE in this lab.\n";
     tokenizer = std::make_unique<BPETokenizer>(vocab, merges);
   } else {
-    tokenizer = std::make_unique<SimpleTokenizer>(ReadVocabJson(model));
+    auto custom_vocab = ReadVocabJson(model);
+    vocab_size = custom_vocab.size();
+    tokenizer = std::make_unique<SimpleTokenizer>(std::move(custom_vocab));
   }
 
   auto result = tokenizer->Tokenize(text, lang);
@@ -84,6 +88,7 @@ int RunCli(int argc, char** argv) {
   }
   std::cout << "token_count=" << result.token_count() << " chars_per_token=" << std::fixed << std::setprecision(2)
             << result.chars_per_token() << " language=" << result.language << '\n';
+  std::cout << "vocab_size=" << vocab_size << '\n';
   std::cout << "top_n=" << top_n << " (educational placeholder for frequency views)\n";
 
   if (result.token_count() > kEducationalContextLimit) {

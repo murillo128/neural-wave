@@ -30,6 +30,18 @@ This lab includes an educational context threshold:
 1. **simple**: rule-based split by punctuation/space.
 2. **bpe**: tiny deterministic merge-list over UTF-8 code points.
 
+
+## Connection to next-token inference
+
+This lab only visualizes the tokenization part. In a real LLM, the produced token IDs would be fed into an embedding table. The transformer would output logits over the same fixed vocabulary. A decoder would choose the next token ID and append it to the context.
+
+## Key lesson
+
+- Token IDs are arbitrary indices.
+- The tokenizer does not understand meaning.
+- Same text can have different token counts depending on the tokenizer.
+- Token count affects context, latency, and cost.
+
 ## Build
 
 ```bash
