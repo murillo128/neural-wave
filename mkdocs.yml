@@ -1,0 +1,78 @@
+site_name: Neural Wave
+site_description: A lightweight LLM learning book with C++ labs
+site_url: https://murillo128.github.io/neural-wave/
+
+repo_name: murillo128/neural-wave
+repo_url: https://github.com/murillo128/neural-wave
+
+docs_dir: docs
+site_dir: site
+
+theme:
+  name: material
+  language: en
+  features:
+    - navigation.sections
+    - navigation.expand
+    - navigation.top
+    - navigation.indexes
+    - toc.follow
+    - search.suggest
+    - search.highlight
+    - content.code.copy
+    - content.code.select
+  palette:
+    - scheme: default
+      primary: black
+      accent: blue
+      toggle:
+        icon: material/weather-night
+        name: Switch to dark mode
+    - scheme: slate
+      primary: black
+      accent: blue
+      toggle:
+        icon: material/weather-sunny
+        name: Switch to light mode
+
+markdown_extensions:
+  - admonition
+  - footnotes
+  - tables
+  - attr_list
+  - md_in_html
+  - toc:
+      permalink: true
+  - pymdownx.details
+  - pymdownx.superfences
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - pymdownx.arithmatex:
+      generic: true
+
+extra_javascript:
+  - javascripts/mathjax.js
+  - https://unpkg.com/mathjax@3/es5/tex-mml-chtml.js
+
+extra_css:
+  - stylesheets/extra.css
+
+nav:
+  - Home: index.md
+  - Learning Map: learning-map.md
+  - Lessons:
+      - 00 - How to read this repo: lessons/00-how-to-read-this-repo.md
+      - 01 - Tokenization: lessons/01-tokenization.md
+      - 02 - Embeddings: lessons/02-embeddings.md
+      - 03 - Positional Information: lessons/03-positional-information.md
+  - Upcoming Lessons:
+      - 04 - Transformer Block from the Outside: lessons/04-transformer-block-from-the-outside.md
+  - Labs:
+      - Labs Overview: labs/index.md
+      - 01 - Tokenizer Visualizer: labs/01-tokenizer-visualizer.md
+      - 02 - Embedding Lookup: labs/02-embedding-lookup.md
+      - 03 - Positional Embeddings: labs/03-positional-embeddings.md
+  - Glossary: glossary.md
+  - Questions: questions.md

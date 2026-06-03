@@ -51,6 +51,6 @@ This lab does not explain attention, Q/K/V, KV cache, RoPE, or training.
 
 ## How it connects to the note
 
-Read `notes/02-embeddings.md` first. Then run this lab to see the input embedding side in concrete C++.
+Read `../../docs/lessons/02-embeddings.md` first. Then run this lab to see the input embedding side in concrete C++.
 
 The next lab, `labs/03-positional-embeddings/`, adds position to these token vectors.
