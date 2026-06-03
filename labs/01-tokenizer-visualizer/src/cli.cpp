@@ -6,6 +6,7 @@
 #include <memory>
 #include <stdexcept>
 #include <string>
+#include <utility>
 
 #include "tokenizer_visualizer/bpe_tokenizer.h"
 #include "tokenizer_visualizer/file_utils.h"
@@ -66,6 +67,7 @@ int RunCli(int argc, char** argv) {
   auto vocab = ReadVocabJson(default_vocab);
   auto merges = ReadMergesFile(default_merges);
 
+  std::size_t vocab_size = vocab.size();
   std::unique_ptr<Tokenizer> tokenizer;
   if (model == "simple") tokenizer = std::make_unique<SimpleTokenizer>(vocab);
   else if (model == "bpe") tokenizer = std::make_unique<BPETokenizer>(vocab, merges);
@@ -73,11 +75,14 @@ int RunCli(int argc, char** argv) {
     std::cerr << "Warning: tiktoken mode maps to educational BPE in this lab.\n";
     tokenizer = std::make_unique<BPETokenizer>(vocab, merges);
   } else {
-    tokenizer = std::make_unique<SimpleTokenizer>(ReadVocabJson(model));
+    auto custom_vocab = ReadVocabJson(model);
+    vocab_size = custom_vocab.size();
+    tokenizer = std::make_unique<SimpleTokenizer>(std::move(custom_vocab));
   }
 
   auto result = tokenizer->Tokenize(text, lang);
 
+  std::cout << "vocab_size=" << vocab_size << '\n';
   std::cout << "Token table\n-----------\n";
   for (std::size_t i = 0; i < result.tokens.size(); ++i) {
     std::cout << std::setw(3) << i << " | " << std::setw(12) << result.tokens[i] << " | " << result.token_ids[i] << '\n';

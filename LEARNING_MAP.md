@@ -13,10 +13,16 @@ Milestone 1: Understanding token-by-token inference.
 
 ### 01 - Tokenization
 
-- Text is transformed into tokens before model inference.
-- Tokens map to arbitrary token IDs.
-- Token count affects context usage, latency, and cost.
-- Tokenization quality matters for languages, code, and domain-specific text.
+- Why text is transformed into tokens before model inference.
+- Basic mapping from tokens to token IDs.
+- Fixed vocabulary used by a tokenizer/model pair.
+- Token IDs as arbitrary integer indices with no numeric semantic distance.
+- Multilingual tokenization with shared English, Spanish, code, punctuation, and symbol coverage.
+- How tokenizer coverage changes token count and `[UNK]` behavior.
+- How token count affects cost, context usage, latency, and serving throughput.
+- Logits over the fixed vocabulary.
+- Softmax at a high level.
+- Autoregressive generation loop: previous token IDs -> next token ID -> append to context.
 
 ### 02 - Embeddings
 
