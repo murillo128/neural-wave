@@ -12,7 +12,14 @@ Understand token-by-token inference and build a tokenizer visualizer.
 
 - Why text is transformed into tokens before model inference.
 - Basic mapping from tokens to token IDs.
-- How token count affects context usage and cost.
+- Fixed vocabulary used by a tokenizer/model pair.
+- Token IDs as arbitrary integer indices with no numeric semantic distance.
+- Multilingual tokenization with shared English, Spanish, code, punctuation, and symbol coverage.
+- How tokenizer coverage changes token count and `[UNK]` behavior.
+- How token count affects cost, context usage, latency, and serving throughput.
+- Logits over the fixed vocabulary.
+- Softmax at a high level.
+- Autoregressive generation loop: previous token IDs -> next token ID -> append to context.
 
 ## Concepts partially understood
 
@@ -29,4 +36,4 @@ Understand token-by-token inference and build a tokenizer visualizer.
 
 ## Next concrete step
 
-Build and run `labs/01-tokenizer-visualizer`, then compare tokenization behavior for English, Spanish, and code examples.
+Embeddings: token IDs -> learned vectors.
