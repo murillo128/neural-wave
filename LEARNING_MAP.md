@@ -2,27 +2,37 @@
 
 ## Current milestone
 
-Milestone 1: Understanding token-by-token inference.
+**Milestone 1: Understanding token-by-token inference.**
 
-## Active labs
+The repo is currently building the pipeline from text into the first model-ready vectors:
 
-- `labs/01-tokenizer-visualizer/`
-- `labs/02-embedding-lookup/`
-- `labs/03-positional-embeddings/`
+```text
+text -> tokens -> token IDs -> embeddings -> token+position vectors
+```
 
-## Concepts covered
+The next step is to understand, from the outside, how those vectors become contextual during transformer processing.
 
-### 01 - Tokenization and next-token inference
+## Completed chapters
 
+### 00 - How to read this repo
+
+- The repo is a lightweight learning book plus runnable C++ labs.
+- Lessons use a spiral approach: concept, minimal math, intuition, implementation model, practical impact, lab, summary.
+- Labs are intentionally tiny, explicit, and educational rather than optimized.
+
+### 01 - Tokenization
+
+- LLMs do not consume raw text directly.
 - Text is transformed through `text -> tokens -> token IDs` before model inference.
 - A tokenizer/model pair uses a fixed vocabulary.
 - Token IDs are arbitrary integer indices into that vocabulary; nearby ID numbers are not necessarily semantically related.
 - A tokenizer can be multilingual when its vocabulary and training data cover multiple languages, scripts, symbols, code, punctuation, and other domains.
 - Tokenization efficiency varies by language and domain.
+- Unknown or rare text may be split into smaller pieces.
 - More tokens for the same text use more context, add inference work, increase latency, and can raise product cost.
-- The model predicts logits over the fixed vocabulary.
-- Softmax converts logits into probabilities.
-- High-level autoregressive loop: `token IDs -> logits -> probabilities -> next token ID -> append to context -> repeat`.
+- High-level autoregressive loop: `text -> tokens -> token IDs -> embeddings -> transformer -> logits -> probabilities -> next token -> append -> repeat`.
+
+Lab: `labs/01-tokenizer-visualizer/`
 
 ### 02 - Embeddings
 
@@ -31,11 +41,16 @@ Milestone 1: Understanding token-by-token inference.
 - `embedding_table[vocab_size][hidden_size]`
 - `x = E[token_id]`
 - A sequence becomes a matrix `T x hidden_size`.
-- Dot product and cosine similarity.
-- Embeddings as learned coordinates.
-- `lm_head` maps final hidden vectors to logits.
+- Dot product and cosine similarity compare vectors in different ways.
+- Embeddings are learned coordinates, not explicit definitions.
+- Initial embeddings are non-contextual.
+- Input embeddings select one row for each token ID.
+- The output projection, or `lm_head`, scores every vocabulary item from a final hidden vector.
 - Logits are raw token scores before softmax.
-- Embeddings/lm_head scale with `vocab_size * hidden_size`.
+- Softmax converts logits into a probability distribution.
+- Embeddings and `lm_head` scale with `vocab_size * hidden_size`.
+
+Lab: `labs/02-embedding-lookup/`
 
 ### 03 - Positional Information
 
@@ -47,8 +62,23 @@ Milestone 1: Understanding token-by-token inference.
 - The final input to the first transformer block still has shape `T x hidden_size`.
 - Learned positional embeddings are trained parameters, initialized like other learned weights.
 - The same token receives a different final vector at different positions.
-- Absolute positional embeddings have long-context extrapolation limitations.
+- After Lesson 03, each row knows token identity and position, but not yet full context.
 - RoPE is a later positional technique, only introduced conceptually for now.
+
+Lab: `labs/03-positional-embeddings/`
+
+## Current frontier
+
+Lesson 04 remains:
+
+**Transformer block from the outside: how tokens become contextual.**
+
+Goal:
+
+- Understand that the first transformer block receives `T x hidden_size` vectors already containing token identity + position.
+- Understand at a high level that later blocks let token representations depend on other tokens.
+- Understand the input/output shape of a block before studying internals.
+- Do not introduce Q/K/V yet.
 
 ## Concepts partially understood
 
@@ -57,34 +87,32 @@ Milestone 1: Understanding token-by-token inference.
 - Why words in different languages can end up close in embedding space.
 - How magnitude and direction are both useful.
 - Practical trade-off between larger vocabularies and fewer tokens.
-- Quantization impact on embeddings/lm_head.
+- Quantization impact on embeddings/lm_head as a memory and serving concern.
 
-## Open questions
+## Do not jump ahead yet
 
-- How does a token ID become a vector?
-- Why can embeddings encode semantic similarity?
-- Why can words in different languages end up close in embedding space?
-- What is the difference between prefill and decode in the autoregressive loop?
-- Why does output vocabulary size affect the final projection and softmax cost?
-- How do embeddings become contextual?
-- How do tokens interact with each other?
-- What exactly is stored in KV cache?
-- How does attention use position?
-- Why does RoPE help long-context models?
-- Later, how does quantization affect quality?
+The following topics are intentionally postponed:
 
-## Recently answered
+- attention internals;
+- Q/K/V;
+- KV cache internals;
+- RoPE math;
+- training loops;
+- fine-tuning;
+- RLHF or DPO;
+- RAG implementation details;
+- quantization internals.
 
-- How does the model know the order of tokens?
-- Why do "dog bites man" and "man bites dog" differ?
-- What is positional information?
+These will be easier once the outside shape of token-by-token inference is clear.
 
 ## Next concrete step
 
-Lesson 04: Transformer block from the outside: how tokens become contextual.
+Write Lesson 04 as a chapter about the transformer block from the outside:
 
-Goal:
+```text
+T x hidden_size token+position vectors
+  -> transformer block
+  -> T x hidden_size contextual vectors
+```
 
-- Understand that the first transformer block receives `T x hidden_size` vectors already containing token identity + position.
-- Understand at a high level that later blocks let token representations depend on other tokens.
-- Do not introduce Q/K/V yet.
+The lesson should explain what changes conceptually while preserving the boundary that Q/K/V is not introduced yet.
