@@ -42,9 +42,10 @@ This separation is intentional and should remain strict so learning material sta
 
 **Milestone 1: Understanding token-by-token inference.**
 
-Active lab:
+Active labs:
 
 - `labs/01-tokenizer-visualizer/`
+- `labs/02-embedding-lookup/`
 
 ## How to use this repo
 
