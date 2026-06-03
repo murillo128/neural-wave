@@ -50,13 +50,24 @@ Addition is component-wise, so the output vector has the same width:
 
 There is still one vector per token. The number of rows remains \(T\), and the number of columns remains \(hidden\_size\).
 
+!!! note "Shape invariant"
+    Adding positional information changes the vector values, not the matrix shape. The sequence is still \(T \times hidden\_size\).
+
 ## Visual / geometric intuition
 
-| token | token id | token embedding | position | positional embedding | final vector |
-| --- | ---: | --- | ---: | --- | --- |
-| dog | 0 | \(E(dog)\) | 0 | \(P(0)\) | \(E(dog) + P(0)\) |
-| bites | 1 | \(E(bites)\) | 1 | \(P(1)\) | \(E(bites) + P(1)\) |
-| man | 2 | \(E(man)\) | 2 | \(P(2)\) | \(E(man) + P(2)\) |
+For the phrase `dog bites man`, each row combines the token identity with the row's position:
+
+| token | token id | position | final input vector |
+| --- | ---: | ---: | --- |
+| dog | 0 | 0 | \(E(dog) + P(0)\) |
+| bites | 1 | 1 | \(E(bites) + P(1)\) |
+| man | 2 | 2 | \(E(man) + P(2)\) |
+
+The two ingredients are still separate ideas:
+
+- token embedding: \(E(token)\);
+- positional embedding: \(P(position)\);
+- final vector: \(E(token) + P(position)\).
 
 A token embedding answers:
 
@@ -111,6 +122,9 @@ Position matters because:
 In this simplified absolute-position view, \(P(4096)\) may not exist if `max_context_size` is 4096 positions. Applications may reject, truncate, chunk, summarize, or retrieve. This motivates later long-context techniques.
 
 Modern models often use other positional schemes, including RoPE. RoPE is only future motivation here; this lesson does not explain RoPE math.
+
+!!! warning "Boundary"
+    This chapter uses learned absolute positional embeddings as the teaching model. RoPE and long-context positional schemes come later.
 
 ## Lab walkthrough
 
@@ -182,7 +196,7 @@ This lesson intentionally stops before transformer internals:
 
 Read the Lesson 04 stub: transformer block from the outside.
 
-### 4. Repo changes
+### 4. Lab connection
 
-- Moved the positional information lesson into `docs/lessons/`.
-- Connected the lesson to the C++ positional embeddings lab.
+- The paired lab makes positional vector addition concrete.
+- The lab intentionally stays before attention and RoPE.

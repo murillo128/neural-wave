@@ -16,6 +16,9 @@ Token IDs are arbitrary. The model should not feed raw ID numbers as semantic va
 
 Embeddings solve this by mapping each token ID to a vector. The vector is the first learned representation of the token.
 
+!!! note "Lookup, not arithmetic on IDs"
+    The model uses the token ID to choose a row. It does not treat the ID number itself as a meaningful feature.
+
 ## Conceptual explanation
 
 An embedding table is a matrix with one row per vocabulary token:
@@ -129,6 +132,9 @@ Conceptually:
 
 Sometimes the embedding table and output projection share weights. This is called weight tying. It is useful because both are vocab-sized matrices. Details come later.
 
+!!! note "Two directions"
+    Embedding lookup maps from a token ID into vector space. The `lm_head` maps from vector space back to vocabulary scores.
+
 ## Tiny softmax bridge
 
 Given logits:
@@ -198,7 +204,7 @@ This lesson does not explain training, attention, Q/K/V, contextualization, full
 
 Read Lesson 03: positional information.
 
-### 4. Repo changes
+### 4. Lab connection
 
-- Moved the polished embeddings lesson into `docs/lessons/`.
-- Connected the lesson to the C++ embedding lookup lab.
+- The paired lab turns row lookup, dot product, norm, and cosine similarity into executable examples.
+- The vectors are intentionally tiny so the geometry stays visible.

@@ -22,6 +22,9 @@ Tokenization affects:
 
 Context windows are measured in tokens, not characters or words. More tokens means more context usage, more compute, more latency, and potentially more cost.
 
+!!! tip "Engineering habit"
+    Count tokens early when designing prompts, retrieval chunks, and request limits.
+
 ## Conceptual explanation
 
 A tokenizer converts text into a sequence of known pieces.
@@ -75,7 +78,9 @@ human text
   -> model input IDs
 ```
 
-Common text may be represented with larger pieces. Rare text may be split into smaller pieces. Code, punctuation, accents, whitespace, emojis, symbols, and domain-specific strings can tokenize differently from ordinary English prose. Spanish or other languages may use more or fewer tokens depending on how well the tokenizer vocabulary covers them.
+Common text may be represented with larger pieces. Rare text may be split into smaller pieces.
+
+Code, punctuation, accents, whitespace, emojis, symbols, and domain-specific strings can tokenize differently from ordinary English prose. Spanish or other languages may use more or fewer tokens depending on how well the tokenizer vocabulary covers them.
 
 ## Implementation model
 
@@ -178,7 +183,7 @@ This lesson does not explain embeddings, transformer internals, attention, Q/K/V
 
 Read Lesson 02: embeddings.
 
-### 4. Repo changes
+### 4. Lab connection
 
-- Moved the polished tokenization lesson into `docs/lessons/`.
-- Connected the lesson to the C++ tokenizer visualizer lab.
+- The paired lab makes token splitting and token counts visible.
+- The lab stays deterministic so the first pipeline step is easy to inspect.
