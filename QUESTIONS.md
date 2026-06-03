@@ -4,15 +4,9 @@ Track active learning questions and hypotheses.
 
 ## Current lesson questions
 
-- How does a token ID become a vector?
-- Why can embeddings encode semantic similarity?
-- Why can words in different languages end up close in embedding space?
-- What is the difference between prefill and decode in the autoregressive loop?
-- Why does output vocabulary size affect the final projection and softmax cost?
-- How does the model know token order?
-- Why are "dog bites man" and "man bites dog" different if the token embeddings are the same but reordered?
-- What does positional information add to token embeddings?
 - How does an initial embedding become contextual?
+- What does a transformer block do from the outside?
+- How do tokens start to depend on other tokens?
 
 ## Recently answered
 
@@ -24,6 +18,11 @@ Track active learning questions and hypotheses.
 - What is cosine similarity?
 - What is the `lm_head`?
 - What are logits?
+- How does the model know token order?
+- Why are "dog bites man" and "man bites dog" different if the token embeddings are the same but reordered?
+- What does positional information add to token embeddings?
+- How are P(0), P(1), P(2), ... obtained?
+- What happens if the input text exceeds the context window?
 
 ## Later questions
 
@@ -31,6 +30,8 @@ Track active learning questions and hypotheses.
 - Why is decode slower than prefill?
 - How does quantization affect quality?
 - Why do providers differ if models are similar?
+- How does RoPE work mathematically?
+- How do long-context extensions work?
 
 ## Experiment log template
 

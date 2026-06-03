@@ -46,6 +46,7 @@ Active labs:
 
 - `labs/01-tokenizer-visualizer/`
 - `labs/02-embedding-lookup/`
+- `labs/03-positional-embeddings/`
 
 ## How to use this repo
 

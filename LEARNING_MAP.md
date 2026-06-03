@@ -8,6 +8,7 @@ Milestone 1: Understanding token-by-token inference.
 
 - `labs/01-tokenizer-visualizer/`
 - `labs/02-embedding-lookup/`
+- `labs/03-positional-embeddings/`
 
 ## Concepts covered
 
@@ -36,6 +37,19 @@ Milestone 1: Understanding token-by-token inference.
 - Logits are raw token scores before softmax.
 - Embeddings/lm_head scale with `vocab_size * hidden_size`.
 
+### 03 - Positional Information
+
+- Token embeddings encode token identity but not order.
+- `dog bites man` and `man bites dog` contain the same token embeddings in a different order.
+- A sequence after embedding lookup has shape `T x hidden_size`.
+- Absolute positional embeddings use a table with shape `max_context_size x hidden_size`.
+- Each input vector can be formed as `X_i = E(token_i) + P(i)`.
+- The final input to the first transformer block still has shape `T x hidden_size`.
+- Learned positional embeddings are trained parameters, initialized like other learned weights.
+- The same token receives a different final vector at different positions.
+- Absolute positional embeddings have long-context extrapolation limitations.
+- RoPE is a later positional technique, only introduced conceptually for now.
+
 ## Concepts partially understood
 
 - Weight tying.
@@ -52,20 +66,25 @@ Milestone 1: Understanding token-by-token inference.
 - Why can words in different languages end up close in embedding space?
 - What is the difference between prefill and decode in the autoregressive loop?
 - Why does output vocabulary size affect the final projection and softmax cost?
-- How does the model know the order of tokens?
-- Why do "dog bites man" and "man bites dog" differ?
 - How do embeddings become contextual?
 - How do tokens interact with each other?
-- What is positional information?
-- Later, what exactly is stored in KV cache?
+- What exactly is stored in KV cache?
+- How does attention use position?
+- Why does RoPE help long-context models?
 - Later, how does quantization affect quality?
+
+## Recently answered
+
+- How does the model know the order of tokens?
+- Why do "dog bites man" and "man bites dog" differ?
+- What is positional information?
 
 ## Next concrete step
 
-Embeddings: token IDs -> learned vectors.
+Lesson 04: Transformer block from the outside: how tokens become contextual.
 
 Goal:
 
-- Understand why token ID numbers are not passed directly as meaningful numeric values.
-- Learn embedding lookup: `x = E[token_id]`.
-- Connect tokenization to the next stage of the inference pipeline.
+- Understand that the first transformer block receives `T x hidden_size` vectors already containing token identity + position.
+- Understand at a high level that later blocks let token representations depend on other tokens.
+- Do not introduce Q/K/V yet.
