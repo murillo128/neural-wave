@@ -32,11 +32,14 @@ This lab includes an educational context threshold:
 
 ## Connection to next-token inference
 
-This lab visualizes only the tokenization part of the LLM pipeline. A real LLM would feed token IDs into an embedding table, then transformer layers would process those vectors and output logits over the fixed vocabulary. Softmax and a decoding rule such as sampling or greedy decoding would choose the next token ID. That selected token ID would be appended to the context before the model predicts again.
+This lab only visualizes the tokenization part of the LLM pipeline. In a real LLM, the produced token IDs would be fed into an embedding table. The transformer would output logits over the same fixed vocabulary. A decoder would choose the next token ID and append it to the context before the model predicts again.
 
 ## Key lesson
 
-Token IDs are arbitrary indices into a fixed vocabulary. The tokenizer does not understand meaning; it only applies rules and vocabulary lookups. Token count depends on tokenizer coverage, and token count affects context usage, latency, and cost.
+- Token IDs are arbitrary indices.
+- The tokenizer does not understand meaning.
+- Same text can have different token counts depending on the tokenizer.
+- Token count affects context, latency, and cost.
 
 ## Build
 
