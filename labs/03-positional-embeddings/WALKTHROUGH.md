@@ -60,6 +60,6 @@ After this lab, each row knows token identity plus position, but not yet full co
 
 ## How it connects to the note
 
-Read `notes/03-positional-information.md` first. Then run this lab to see the table from the chapter implemented in C++.
+Read `../../docs/lessons/03-positional-information.md` first. Then run this lab to see the table from the chapter implemented in C++.
 
 Lesson 04 will explain, from the outside, how token+position vectors become contextual vectors.

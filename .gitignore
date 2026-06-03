@@ -5,3 +5,6 @@ build/
 # CTest / CMake generated files
 Testing/
 CMakeUserPresets.json
+site/
+.cache/
+__pycache__/

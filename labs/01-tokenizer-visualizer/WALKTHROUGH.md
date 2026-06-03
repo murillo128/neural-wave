@@ -61,6 +61,6 @@ It is also not:
 
 ## How it connects to the note
 
-Read `notes/01-tokenization.md` first. Then run this lab to make the chapter's claims visible in C++ output.
+Read `../../docs/lessons/01-tokenization.md` first. Then run this lab to make the chapter's claims visible in C++ output.
 
 The next lab, `labs/02-embedding-lookup/`, starts where this one stops: token IDs become vectors.
