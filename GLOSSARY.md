@@ -88,6 +88,34 @@ Generating one token at a time by conditioning on previous tokens and appending 
 
 Sharing the same weights between the embedding table and the `lm_head` projection.
 
+## Positional information
+
+Information that tells the model where a token appears in a sequence.
+
+## Positional embedding
+
+A vector associated with a token position, with the same dimensionality as token embeddings.
+
+## Absolute positional embedding
+
+A positional embedding scheme where each absolute position has its own learned vector, commonly represented as `P(i)`.
+
+## Position embedding table
+
+A learned matrix with shape `max_context_size x hidden_size`.
+
+## `max_context_size`
+
+The maximum number of token positions for which a model has positional information in this simplified absolute-position view.
+
+## `X_i = E(token_i) + P(i)`
+
+The simplified input construction where a token embedding and its positional embedding are added to produce the vector passed onward.
+
+## RoPE
+
+A modern positional technique that encodes position using a geometric/mathematical transformation. In this repo it is only introduced conceptually for now; the math comes later.
+
 ## Context window
 
 Maximum number of tokens a model can process in a request.
