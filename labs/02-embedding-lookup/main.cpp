@@ -152,6 +152,7 @@ int main() {
     std::cout << std::fixed << std::setprecision(4);
 
     std::cout << "Embedding lookup examples\n";
+    std::cout << "Educational point: IDs are arbitrary; vectors carry useful relationships.\n\n";
     print_lookup(vocabulary, token_to_id, "cat");
     print_lookup(vocabulary, token_to_id, "vector");
     print_lookup(vocabulary, token_to_id, "house");

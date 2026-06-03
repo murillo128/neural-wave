@@ -4,6 +4,18 @@
 
 A unit of text consumed by a language model.
 
+## Subword token
+
+A token that represents part of a word or text pattern rather than a complete word.
+
+## Byte-level tokenizer
+
+A tokenizer that can fall back to byte-like pieces so unusual text can still be represented.
+
+## Unknown token
+
+A special token used by some tokenizers when text cannot be represented by known vocabulary pieces.
+
 ## Tokenizer
 
 A component that converts text into tokens and token IDs.
@@ -28,9 +40,25 @@ An arbitrary integer index for a token in the vocabulary.
 
 A tokenizer whose vocabulary covers text patterns from multiple languages, scripts, and domains.
 
+## Context usage
+
+The amount of a model's context window consumed by a tokenized input and generated output.
+
+## Context window
+
+Maximum number of tokens a model can process in a request.
+
+## Next-token prediction
+
+The task of scoring possible next tokens given the tokens already in the context.
+
 ## Embedding
 
 A learned vector representation associated with a token ID.
+
+## Non-contextual embedding
+
+The initial token vector selected by token ID before later layers let it depend on surrounding tokens.
 
 ## Embedding table
 
@@ -60,6 +88,10 @@ The length or magnitude of a vector, commonly written as `||a||`.
 
 A normalized vector similarity score: `(a · b) / (||a|| * ||b||)`, focused mostly on direction.
 
+## Output projection
+
+The vocabulary-sized projection that maps a final hidden vector to one score per possible next token.
+
 ## `lm_head`
 
 The output projection that maps a final hidden vector to logits over the vocabulary.
@@ -67,6 +99,10 @@ The output projection that maps a final hidden vector to logits over the vocabul
 ## Logit
 
 A raw, unnormalized score for a possible next token before softmax.
+
+## Probability distribution
+
+A set of probabilities over choices, such as vocabulary tokens, that sum to 1.
 
 ## Softmax
 
@@ -112,13 +148,17 @@ The maximum number of token positions for which a model has positional informati
 
 The simplified input construction where a token embedding and its positional embedding are added to produce the vector passed onward.
 
+## Contextual representation
+
+A token vector after later model layers have allowed it to depend on other tokens in the sequence.
+
+## Chapter boundary
+
+A deliberate stopping point that says which ideas are in scope now and which are postponed.
+
 ## RoPE
 
 A modern positional technique that encodes position using a geometric/mathematical transformation. In this repo it is only introduced conceptually for now; the math comes later.
-
-## Context window
-
-Maximum number of tokens a model can process in a request.
 
 ## Prefill
 
@@ -130,8 +170,8 @@ Phase where tokens are generated one-by-one.
 
 ## KV cache
 
-Stored key/value attention states used to speed generation.
+Stored attention-related state used to speed generation. Internals are postponed.
 
 ## Quantization
 
-Reducing numeric precision of weights/activations for efficiency.
+Reducing numeric precision of weights/activations for efficiency. Internals are postponed.

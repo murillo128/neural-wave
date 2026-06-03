@@ -4,11 +4,29 @@
 
 Explain how arbitrary token IDs become learned vectors that the model can process.
 
+Lesson 01 ended here:
+
+```text
+text -> tokens -> token IDs
+```
+
+This lesson adds the next step:
+
+```text
+token IDs -> embeddings
+```
+
+## Why this matters
+
+Token IDs are useful for lookup, but they are not useful numeric descriptions by themselves. A model needs vectors whose components can be multiplied, added, compared, and transformed.
+
+Embeddings are the bridge from discrete vocabulary IDs to continuous model computation.
+
 ## Conceptual explanation
 
 Token IDs are arbitrary integers. The number assigned to a token is an index, not a semantic magnitude. A model should not treat token ID `42` as "twice as meaningful" as token ID `21`, or as closer to token ID `43` just because the numbers are adjacent.
 
-An embedding table solves this. It maps token IDs to vectors:
+An embedding table solves this:
 
 - The embedding table has one row per vocabulary token.
 - A token ID selects one row of the table.
@@ -38,21 +56,71 @@ The embedding table shape is:
 E: vocab_size x hidden_size
 ```
 
+### One token lookup
+
+Suppose:
+
+```text
+vocab_size = 5
+hidden_size = 3
+```
+
+A tiny embedding table might look like this:
+
+| token | token_id | E[token_id] |
+| --- | ---: | --- |
+| `<pad>` | 0 | `[0.00, 0.00, 0.00]` |
+| `cat` | 1 | `[0.90, 0.20, 0.10]` |
+| `dog` | 2 | `[0.88, 0.25, 0.12]` |
+| `house` | 3 | `[-0.10, 0.05, 0.95]` |
+| `.` | 4 | `[0.01, -0.02, 0.03]` |
+
 For one token:
 
 ```text
-token_id = id
-x = E[id]
-x has shape hidden_size
+token_id = 2
+x = E[2]
+x = [0.88, 0.25, 0.12]
+x has shape hidden_size = 3
 ```
 
-For a sequence:
+The ID `2` is only a row number. The vector is the value used by later computation.
+
+### Sequence lookup
+
+For a sequence of `T = 4` token IDs:
 
 ```text
-token_ids = [id0, id1, ..., idT-1]
-X = [E[id0], E[id1], ..., E[idT-1]]
-X has shape T x hidden_size
+token_ids = [1, 2, 3, 4]
 ```
+
+lookup produces:
+
+```text
+X = [
+  E[1],
+  E[2],
+  E[3],
+  E[4]
+]
+```
+
+With `hidden_size = 3`, the result has shape:
+
+```text
+X: T x hidden_size = 4 x 3
+```
+
+Visually:
+
+| position | token_id | embedding row |
+| ---: | ---: | --- |
+| 0 | 1 | `[0.90, 0.20, 0.10]` |
+| 1 | 2 | `[0.88, 0.25, 0.12]` |
+| 2 | 3 | `[-0.10, 0.05, 0.95]` |
+| 3 | 4 | `[0.01, -0.02, 0.03]` |
+
+At this point, each row describes token identity. It does not yet include position or surrounding context.
 
 ### Dot product
 
@@ -110,20 +178,105 @@ Important cautions:
 - The same token starts with the same embedding each time it appears.
 - Later layers add context so the representation can depend on surrounding tokens.
 
+## Input embeddings vs output projection
+
+There are two vocabulary-sized tables that are easy to confuse.
+
+### Input side: token ID selects one row
+
+On the input side, the model receives token IDs. Each ID selects one row from the embedding table:
+
+```text
+x = E[token_id]
+```
+
+Only the rows for the actual input tokens are looked up.
+
+### Output side: hidden vector scores every vocabulary item
+
+On the output side, the model has a final hidden vector `h` for the current prediction position. The model must score every possible next token in the vocabulary.
+
+Conceptually:
+
+```text
+for each vocab token v:
+    logit[v] = dot(h, lm_head[v])
+```
+
+If `lm_head` is stored as `vocab_size x hidden_size`, the same operation is usually written as matrix multiplication:
+
+```text
+logits = h @ lm_head.T
+```
+
+The result is:
+
+```text
+logits has shape vocab_size
+```
+
+So the difference is:
+
+| Side | Input | Operation | Output |
+| --- | --- | --- | --- |
+| Embedding lookup | one token ID | select one row | one vector of size `hidden_size` |
+| Output projection / `lm_head` | one hidden vector `h` | score every vocabulary row | logits vector of size `vocab_size` |
+
+The input side asks, "Which vector represents this token ID?" The output side asks, "How compatible is this hidden vector with every possible next token?"
+
+## Logits and softmax toy example
+
+Logits are raw scores. They are not probabilities yet.
+
+Suppose the vocabulary is:
+
+```text
+[cat, dog, house]
+```
+
+and the output projection produces:
+
+```text
+logits = [2.0, 1.0, 0.0]
+```
+
+Softmax converts those scores into a probability distribution:
+
+```text
+exp(2.0) = 7.39
+exp(1.0) = 2.72
+exp(0.0) = 1.00
+sum      = 11.11
+```
+
+Approximate probabilities:
+
+| token | logit | probability |
+| --- | ---: | ---: |
+| `cat` | 2.0 | 0.67 |
+| `dog` | 1.0 | 0.24 |
+| `house` | 0.0 | 0.09 |
+
+The model can then choose a next token. Greedy decoding would choose `cat`. Sampling might choose another token according to the distribution.
+
+This example does not explain how the hidden vector `h` was created. That comes later.
+
 ## Implementation summary
 
 The lab in `labs/02-embedding-lookup/` demonstrates the core lookup and comparison ideas with small hand-written data.
 
 It implements:
 
-- token string -> token ID
-- token ID -> vector
-- dot product
-- vector norm
-- cosine similarity
-- nearest neighbors
+- token string -> token ID;
+- token ID -> vector;
+- dot product;
+- vector norm;
+- cosine similarity;
+- nearest neighbors.
 
 The vectors are manually chosen for teaching. They are not learned by training.
+
+The lab's central message is: IDs are arbitrary; vectors carry useful relationships.
 
 ## Practical impact
 
@@ -143,29 +296,15 @@ Example memory cost for one table with `vocab_size = 50,000` and `hidden_size = 
 | INT8 | 1 | 205 MB |
 | INT4 | 0.5 | 102 MB |
 
-Quantization is only being mentioned here as a memory-impact topic. The internals are a later topic.
+Quantization is only being mentioned here as a memory/cost teaser. The internals are a later topic.
 
-The `lm_head` has a similar shape and cost. It maps a final hidden vector to one raw score per vocabulary token:
-
-```text
-logit[token] = h · lm_head[token]
-```
-
-If `lm_head` is stored as `vocab_size x hidden_size`, then:
-
-```text
-logits = h @ lm_head.T
-```
-
-Logits are raw token scores before softmax. Softmax converts logits into probabilities.
-
-Embedding lookup is cheap computationally because it selects rows. The embedding table can still be large in memory. The `lm_head` is also large in memory and has meaningful compute cost during generation because the model scores many possible next tokens.
+The `lm_head` has a similar shape and cost. Embedding lookup is cheap computationally because it selects rows. The `lm_head` has meaningful compute cost during generation because it scores many possible next tokens.
 
 Vocabulary size affects several trade-offs:
 
 - A larger vocabulary can reduce token count for some workloads.
 - A larger vocabulary increases embedding and `lm_head` size.
-- Tokenization efficiency, memory, serving cost, and quantization considerations are connected.
+- Tokenization efficiency, memory, serving cost, and later quantization considerations are connected.
 
 Weight tying means the embedding table and `lm_head` can share weights conceptually or in implementation, reducing separate parameter storage.
 
@@ -173,11 +312,11 @@ Weight tying means the embedding table and `lm_head` can share weights conceptua
 
 This lesson intentionally does not cover later transformer internals:
 
-- Attention is not covered yet.
-- Q/K/V are not covered yet.
-- KV cache is not covered yet.
-- RoPE is not covered yet.
-- Quantization is only mentioned as a memory-impact topic.
+- attention is not covered yet;
+- Q/K/V are not covered yet;
+- KV cache is not covered yet;
+- RoPE is not covered yet;
+- quantization is only mentioned as a memory/cost teaser.
 
 ## Session summary
 
@@ -190,24 +329,27 @@ This lesson intentionally does not cover later transformer internals:
 - A sequence of length `T` becomes a `T x hidden_size` matrix.
 - Dot product and cosine similarity compare vectors in different ways.
 - Embeddings are learned coordinates, not explicit definitions.
-- Initial embeddings are not yet contextual.
-- `lm_head` maps final hidden vectors to logits over the vocabulary.
+- Initial embeddings are non-contextual.
+- The input embedding table selects one row for a token ID.
+- The output projection scores every vocabulary token from a hidden vector `h`.
+- `lm_head` produces a logits vector of size `vocab_size`.
+- Softmax converts logits into a probability distribution.
 - Embedding and `lm_head` parameter counts scale with `vocab_size * hidden_size`.
 
 ### 2. Open questions
 
 - How does the model know token order?
-- Why are "dog bites man" and "man bites dog" different if they contain the same token embeddings?
+- Why are `dog bites man` and `man bites dog` different if they contain the same token embeddings?
 - How does an initial embedding become contextual?
-- How will later layers let tokens interact?
-- What are positional embeddings / positional information?
 
 ### 3. Next concrete step
 
-Lesson 03: Positional Information.
+Read Lesson 03, `notes/03-positional-information.md`, and run `labs/03-positional-embeddings/` to see token identity combined with position.
 
 ### 4. Repo changes
 
-- Added this note for Lesson 02.
-- Added `labs/02-embedding-lookup/` as a small C++ embedding lookup lab.
-- Updated the learning map, glossary, questions, README, and next-session prompt.
+- Polished `notes/02-embeddings.md` into a more consistent chapter.
+- Added clearer one-token and sequence embedding lookup examples.
+- Clarified input embeddings versus output projection.
+- Added a toy logits and softmax example.
+- Connected the lesson more directly to `labs/02-embedding-lookup/`.

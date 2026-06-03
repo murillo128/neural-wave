@@ -1,332 +1,257 @@
-# 03 - Positional Information: how does the model know order?
+# 03 - Positional information: token identity plus order
 
 ## Goal
 
-Explain why token embeddings alone are not enough, and how positional information is added before entering the first transformer block.
+Understand why token embeddings need positional information before they are passed onward.
 
-After Lesson 02, we know that token IDs become vectors through an embedding lookup. That answers one important question:
-
-```text
-what token is this? -> token embedding
-```
-
-This lesson adds the next missing piece:
+Lesson 02 produced one vector per token:
 
 ```text
-where is this token? -> positional information
+token IDs -> embeddings
 ```
 
-The boundary is important: this lesson stops before attention and before transformer block internals. We are only building the input vectors that will be handed to the first block.
-
-## Conceptual explanation
-
-Token embeddings answer:
+This lesson adds position:
 
 ```text
-what token is this?
+embeddings + positional information -> token+position vectors
 ```
 
-For example:
+After this lesson, each row knows which token it represents and where that token appears. It still does not know the full surrounding context.
 
-```text
-E("dog")   -> vector for dog
-E("bites") -> vector for bites
-E("man")   -> vector for man
-```
+## Why this matters
 
-But token embeddings do not answer:
+Token embeddings alone identify tokens, but they do not encode order.
 
-```text
-where is this token in the sequence?
-```
-
-Consider these two sequences:
+These sentences contain the same three tokens:
 
 ```text
 dog bites man
 man bites dog
 ```
 
-They contain the same three token embeddings:
+If we only look up token embeddings, the same token has the same starting vector each time it appears. The model needs some way to distinguish `dog` at position `0` from `dog` at position `2`.
+
+Position is what lets the model start representing sequence order.
+
+## Conceptual explanation
+
+A simple positional embedding scheme uses a second table:
 
 ```text
-E("dog")
-E("bites")
-E("man")
+P = position embedding table
 ```
 
-The difference is the order. In the first sentence, `dog` is at position `0` and `man` is at position `2`. In the second sentence, `man` is at position `0` and `dog` is at position `2`.
-
-If we only perform token embedding lookup, the model has vectors for token identity, but it lacks an explicit signal for token location. The missing information is position/order.
-
-So before the first transformer block receives the sequence, each token vector is enriched with position information.
-
-## Minimal math
-
-Define:
-
-- `T`: sequence length, measured in tokens.
-- `hidden_size` or `H`: number of numeric components in each vector.
-- `X_tokens`: token embedding matrix after lookup.
-- `P`: absolute positional embedding table.
-
-After embedding lookup, a sequence has shape:
-
-```text
-X_tokens: T x hidden_size
-```
-
-For learned absolute positional embeddings, the position table has shape:
-
-```text
-P: max_context_size x hidden_size
-```
-
-Each row `P(i)` is the positional embedding for absolute position `i`.
-
-For each token position:
+Each position has a vector with the same size as a token embedding. That allows the model input at position `i` to be formed by addition:
 
 ```text
 X_i = E(token_i) + P(i)
 ```
 
-The final input matrix has shape:
+Where:
+
+- `E(token_i)` says which token is present;
+- `P(i)` says where it appears;
+- `X_i` is the vector passed onward for that row.
+
+This is the first place where token identity and sequence order are combined.
+
+## Minimal math
+
+Definitions:
 
 ```text
-X: T x hidden_size
+E: token embedding table
+P: positional embedding table
+T: sequence length
+hidden_size: vector width
 ```
 
-The shape does not change after adding position. This works because the positional vector has the same dimensionality as the token embedding:
+Shapes:
 
 ```text
-E(token_i): hidden_size
-P(i):       hidden_size
------------------------
-X_i:        hidden_size
+E[token_id] has shape hidden_size
+P(i)        has shape hidden_size
+X_i         has shape hidden_size
 ```
 
-So if the sequence has `T` tokens, the result is still one `hidden_size` vector per token.
-
-## Geometric intuition
-
-Think of a token embedding as learned coordinates for token identity or meaning:
+For a sequence:
 
 ```text
-E("dog") = coordinates for the token dog
+X = [X_0, X_1, ..., X_(T-1)]
+X has shape T x hidden_size
 ```
 
-Think of a positional embedding as a learned displacement associated with a position:
+The shape remains `T x hidden_size` because each row is still one vector per input token. Addition combines information inside each row; it does not add extra rows or widen the vector.
+
+## Visual table
+
+For the sequence:
 
 ```text
-P(0) = displacement for position 0
-P(1) = displacement for position 1
-P(2) = displacement for position 2
+dog bites man
 ```
 
-Then the final input vector is like:
+we can visualize the construction like this:
+
+| token | token_id | `E(token)` | position | `P(i)` | `X_i = E(token) + P(i)` |
+| --- | ---: | --- | ---: | --- | --- |
+| `dog` | 0 | `[1.00, 0.20, -0.10, 0.50]` | 0 | `[0.01, 0.02, 0.03, 0.04]` | `[1.01, 0.22, -0.07, 0.54]` |
+| `bites` | 1 | `[0.10, 1.20, 0.30, -0.40]` | 1 | `[0.10, 0.20, 0.30, 0.40]` | `[0.20, 1.40, 0.60, 0.00]` |
+| `man` | 2 | `[0.90, -0.30, 0.80, 0.10]` | 2 | `[-0.05, -0.10, -0.15, -0.20]` | `[0.85, -0.40, 0.65, -0.10]` |
+
+The final matrix still has three rows and four columns:
 
 ```text
-token identity coordinates + position displacement
+T x hidden_size = 3 x 4
 ```
 
-For the same token at different positions:
+## Mental model
+
+A token embedding answers:
 
 ```text
-E("dog") + P(0)  -> dog at position 0
-E("dog") + P(2)  -> dog at position 2
+What token is this?
 ```
 
-A simple picture:
+A positional embedding answers:
 
 ```text
-same token vector, different position displacements
-
-E("dog") ---- + P(0) ----> representation of dog at position 0
-E("dog") ---- + P(2) ----> representation of dog at position 2
+Where is it in the sequence?
 ```
 
-This means `dog at position 0` and `dog at position 2` are represented differently.
-
-Important caution: the final vector is not a human-readable tuple like:
+Their sum gives a first input vector that answers:
 
 ```text
-(token = dog, position = 2)
+What token is this, and where did it appear?
 ```
 
-It is still just a vector. The token and position information are combined into coordinates useful to the model.
+That is still not the same as contextual meaning. The vector for `dog` at position `0` does not yet know that `bites` follows it or that `man` appears later. It only combines token identity and position.
 
-## How are P(0), P(1), P(2), ... calculated?
+## Learned absolute positional embeddings
 
-In learned absolute positional embeddings, `P(0)`, `P(1)`, `P(2)`, and so on are rows in a learned table, similar to token embeddings.
-
-The analogy is:
+In this simplified lesson, each absolute position has its own learned vector:
 
 ```text
-Token embeddings:
-    dog -> vector
-    cat -> vector
-
-Position embeddings:
-    0 -> vector
-    1 -> vector
-    2 -> vector
+P(0), P(1), P(2), ...
 ```
 
-At initialization, the position vectors usually start as random or small random values, like other learned weights.
-
-During training, the optimizer updates them because better position vectors help reduce prediction error. If a certain way of representing `position 0`, `position 1`, or `position 2` helps the model predict text better, training can move those vectors in useful directions.
-
-They are not hand-coded meanings like:
+The position embedding table has shape:
 
 ```text
-P(0) = "first"
-P(1) = "second"
-P(2) = "third"
+max_context_size x hidden_size
 ```
 
-They are learned statistical coordinates.
+Like token embeddings, these vectors are model parameters. They are initialized and then updated during training because useful position vectors help reduce next-token prediction error.
 
-## What happens when text exceeds the context window?
+This repo is not covering the training loop yet. For now, treat the position table as a learned lookup table that is added to token embeddings.
 
-In this simplified absolute-position view, the model has a finite table of position vectors.
+## Practical impact
 
-For example, if:
+Positional information matters because language is ordered:
 
-```text
-context_window = 4096
-```
+- `dog bites man` and `man bites dog` have different meanings.
+- Function argument order matters in code.
+- Punctuation position can change interpretation.
+- Earlier and later instructions can play different roles in prompts.
 
-then learned absolute positional embeddings are available for:
+It also affects model limits. In this simplified absolute-position view, a model has positional vectors up to `max_context_size`. Longer-context methods and modern positional techniques address this differently, but that is a later topic.
 
-```text
-P(0), P(1), ..., P(4095)
-```
-
-But:
-
-```text
-P(4096)
-P(4097)
-...
-```
-
-may not exist.
-
-Common outcomes when input is too long include:
-
-- the model or API rejects the input as too long;
-- the application truncates the input;
-- the application chunks, summarizes, or retrieves selected parts of the input;
-- experimental extension or interpolation is attempted, but it is not guaranteed to work.
-
-The deeper limitation is that learned absolute positional embeddings are independent rows. Nothing guarantees that `P(1000)` and `P(1001)` have a smooth or extrapolatable relationship.
-
-This motivates later techniques such as RoPE. For now, only the concept matters: RoPE encodes position through a mathematical rule/geometric transformation rather than simply learning one independent vector per absolute position. The RoPE mathematics is a later topic.
+RoPE is one modern positional technique. This lesson only uses it as future motivation; it does not introduce RoPE math.
 
 ## Implementation summary
 
-The lab in `labs/03-positional-embeddings/` demonstrates positional embedding addition with a tiny C++ program.
+The lab in `labs/03-positional-embeddings/` demonstrates:
 
-It uses:
+- token ID lookup;
+- token embedding lookup;
+- position embedding lookup;
+- vector addition;
+- final input vectors for two sentences with the same words in different order.
 
-- tiny vocabulary: `dog`, `bites`, `man`;
-- fixed token IDs;
-- `hidden_size = 4`;
-- manually chosen token embeddings;
-- manually chosen positional embeddings;
-- two sentences:
-  - `dog bites man`
-  - `man bites dog`
-
-For each token, the lab prints:
-
-- token;
-- position;
-- token embedding;
-- positional embedding;
-- final vector: `token embedding + positional embedding`.
-
-The key observation is:
+The important observation is:
 
 ```text
-E("dog") is the same in both sentences
+same token embedding, different final vector because of position
 ```
 
-but:
+For example:
 
 ```text
 E("dog") + P(0) != E("dog") + P(2)
 ```
 
-The lab vectors are manually chosen for teaching. They are not learned by training.
+The vectors are manually chosen for teaching. They are not learned by training.
 
-## Practical impact
+## Bridge to Lesson 04: from independent token+position vectors to contextual vectors
 
-Positional information is needed before the first transformer block.
-
-The first transformer block receives vectors that already contain both:
+After Lesson 03, the model input has shape:
 
 ```text
-token identity + position
+T x hidden_size
 ```
 
-Absolute positional embeddings are easy to understand because they are just another learned table. Their parameter count is:
+Each row contains:
 
-```text
-max_context_size * hidden_size
-```
+- token identity;
+- position information.
 
-But they have long-context limitations. They do not naturally extrapolate beyond the context length they were designed or trained for.
+But each row is still mostly independent at construction time. The row for `dog` does not yet fully depend on `bites` or `man`.
 
-Modern models often use alternatives such as RoPE, but those details are for later lessons.
+Lesson 04 will look at a transformer block from the outside: how a matrix of token+position vectors becomes a matrix of contextual vectors. We will still avoid Q/K/V until the outside behavior is clear.
+
+## Common confusions
+
+### "Does adding position create a bigger vector?"
+
+No. `E(token_i)` and `P(i)` have the same shape, so their sum also has shape `hidden_size`.
+
+### "Does position alone explain sentence meaning?"
+
+No. Position tells the model where tokens appear. Later layers are needed for tokens to influence each other.
+
+### "Does the same token always have the same final input vector?"
+
+No. The token embedding is the same, but the final input vector changes when the position changes.
+
+### "Are these position vectors hand-designed?"
+
+In this lab, yes, for teaching. In real learned absolute positional embeddings, they are learned parameters.
 
 ## Boundaries
 
-This lesson intentionally does not cover:
+This lesson intentionally stops before transformer internals:
 
-- attention;
-- Q/K/V;
-- transformer block internals;
-- KV cache;
-- quantization;
-- full training loop;
-- RoPE mathematics.
+- no attention internals;
+- no Q/K/V;
+- no KV cache internals;
+- no RoPE math;
+- no training loop.
 
 ## Session summary
 
 ### 1. Concepts learned
 
-- Embeddings encode token identity but not order.
-- A sequence after embedding lookup has shape `T x hidden_size`.
-- Positional embeddings can be added to token embeddings.
-- `X_i = E(token_i) + P(i)`.
-- The final shape remains `T x hidden_size`.
-- Learned absolute positional embeddings are trained parameters.
-- The same token gets a different final vector at different positions.
-- Absolute positional embeddings have trouble extrapolating beyond the context length they were designed/trained for.
-- RoPE is a later conceptual motivation, not explained here.
+- Token embeddings encode token identity but not order.
+- Positional information tells the model where each token appears.
+- In the simplified absolute-position view, `P(i)` is a learned vector for position `i`.
+- `X_i = E(token_i) + P(i)` combines token identity and position.
+- The sequence shape remains `T x hidden_size`.
+- The same token embedding can produce different final vectors at different positions.
+- After Lesson 03, each row knows token identity and position, but not yet full context.
 
 ### 2. Open questions
 
-- How does the model use this positional information?
-- How do tokens interact after receiving token + position vectors?
-- How does attention mix information between tokens?
-- Why do many modern models use RoPE or similar techniques?
-- What exactly enters and exits a transformer block?
+- How do token+position vectors become contextual vectors?
+- How do tokens start to depend on other tokens?
+- What does a transformer block do from the outside?
 
 ### 3. Next concrete step
 
-Lesson 04:
-"Transformer block from the outside: how tokens become contextual"
-or similar.
-
-Do not enter Q/K/V yet. The next lesson should explain at a high level that tokens start as independent `meaning + position` vectors and later become contextualized through block processing.
+Read Lesson 04 next: Transformer block from the outside: how tokens become contextual.
 
 ### 4. Repo changes
 
-- Added `notes/03-positional-information.md`.
-- Added `labs/03-positional-embeddings/`.
-- Updated `README.md`.
-- Updated `LEARNING_MAP.md`.
-- Updated `GLOSSARY.md`.
-- Updated `QUESTIONS.md`.
+- Polished `notes/03-positional-information.md` into a consistent chapter.
+- Added a compact visual table for `token`, `token_id`, `E(token)`, `position`, `P(i)`, and `X_i`.
+- Clarified why the shape remains `T x hidden_size`.
+- Added a bridge to Lesson 04 without introducing Q/K/V.

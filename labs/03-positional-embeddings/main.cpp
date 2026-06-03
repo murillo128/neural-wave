@@ -113,6 +113,8 @@ int main() {
 
     std::cout << std::fixed << std::setprecision(2);
 
+    std::cout << "Educational point: Same token embedding, different final vector because of position.\n\n";
+
     print_sequence("Sentence A", sentence_a, token_embeddings, positional_embeddings, vocab);
     print_sequence("Sentence B", sentence_b, token_embeddings, positional_embeddings, vocab);
 
