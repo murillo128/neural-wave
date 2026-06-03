@@ -4,6 +4,8 @@ A lightweight LLM learning book with small C++ labs.
 
 This project is designed to build deep intuition about language models without trying to master every layer before touching the next one.
 
+---
+
 ## Learning approach
 
 We learn in a spiral:
@@ -16,9 +18,11 @@ We learn in a spiral:
 !!! note "Book + lab"
     The lessons are the book. The C++ labs are small executable experiments that make each idea concrete.
 
+---
+
 ## Current milestone
 
-Understanding token-by-token inference.
+**Understanding token-by-token inference.**
 
 ```text
 text
@@ -32,18 +36,24 @@ text
   -> next token
 ```
 
+---
+
 ## Current chapters
 
-- [01 - Tokenization](lessons/01-tokenization.md)
-- [02 - Embeddings](lessons/02-embeddings.md)
-- [03 - Positional Information](lessons/03-positional-information.md)
+1. [01 - Tokenization](lessons/01-tokenization.md)
+2. [02 - Embeddings](lessons/02-embeddings.md)
+3. [03 - Positional Information](lessons/03-positional-information.md)
 
 ## Current labs
 
-- [01 - Tokenizer Visualizer](labs/01-tokenizer-visualizer.md)
-- [02 - Embedding Lookup](labs/02-embedding-lookup.md)
-- [03 - Positional Embeddings](labs/03-positional-embeddings.md)
+1. [01 - Tokenizer Visualizer](labs/01-tokenizer-visualizer.md)
+2. [02 - Embedding Lookup](labs/02-embedding-lookup.md)
+3. [03 - Positional Embeddings](labs/03-positional-embeddings.md)
+
+---
 
 ## Boundaries
 
-We are not yet explaining attention internals, Q/K/V, KV cache internals, RoPE mathematics, training, fine-tuning, RAG, quantization, batching, or serving. Those topics come later.
+We are not yet explaining attention internals, Q/K/V, KV cache internals, RoPE mathematics, training, fine-tuning, RAG, quantization, batching, or serving.
+
+Those topics come later, after the first token-to-vector pipeline is solid.

@@ -6,6 +6,18 @@
 
 The repo is currently building the pipeline from text into model-ready token vectors.
 
+```text
+text
+  -> tokens
+  -> token IDs
+  -> embedding lookup
+  -> T x hidden_size matrix
+  -> add positional information
+  -> still T x hidden_size
+```
+
+---
+
 ## Completed chapters
 
 1. [01 - Tokenization](lessons/01-tokenization.md)
@@ -18,17 +30,9 @@ The repo is currently building the pipeline from text into model-ready token vec
 
 This is the next lesson and should remain an outside-view stub until the first three chapters are solid.
 
-## What we know so far
+---
 
-```text
-text
-  -> tokens
-  -> token IDs
-  -> embedding lookup
-  -> T x hidden_size matrix
-  -> add positional information
-  -> still T x hidden_size
-```
+## What we know so far
 
 We know how to convert human text into token IDs, map token IDs to vectors, and add positional information while keeping the same sequence matrix shape.
 
@@ -40,6 +44,8 @@ We know how to convert human text into token IDs, map token IDs to vectors, and 
 - Q/K/V;
 - KV cache;
 - prefill/decode details.
+
+---
 
 ## Do not jump ahead yet
 
