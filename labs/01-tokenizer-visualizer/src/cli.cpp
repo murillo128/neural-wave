@@ -82,7 +82,7 @@ int RunCli(int argc, char** argv) {
 
   auto result = tokenizer->Tokenize(text, lang);
 
-  std::cout << "vocab_size=" << vocab_size << '\n';
+  std::cout << "vocab_size: " << vocab_size << '\n';
   std::cout << "Token table\n-----------\n";
   for (std::size_t i = 0; i < result.tokens.size(); ++i) {
     std::cout << std::setw(3) << i << " | " << std::setw(12) << result.tokens[i] << " | " << result.token_ids[i] << '\n';

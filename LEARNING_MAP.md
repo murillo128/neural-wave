@@ -11,18 +11,17 @@ Milestone 1: Understanding token-by-token inference.
 
 ## Concepts covered
 
-### 01 - Tokenization
+### 01 - Tokenization and next-token inference
 
-- Why text is transformed into tokens before model inference.
-- Basic mapping from tokens to token IDs.
-- Fixed vocabulary used by a tokenizer/model pair.
-- Token IDs as arbitrary integer indices with no numeric semantic distance.
-- Multilingual tokenization with shared English, Spanish, code, punctuation, and symbol coverage.
-- How tokenizer coverage changes token count and `[UNK]` behavior.
-- How token count affects cost, context usage, latency, and serving throughput.
-- Logits over the fixed vocabulary.
-- Softmax at a high level.
-- Autoregressive generation loop: previous token IDs -> next token ID -> append to context.
+- Text is transformed through `text -> tokens -> token IDs` before model inference.
+- A tokenizer/model pair uses a fixed vocabulary.
+- Token IDs are arbitrary integer indices into that vocabulary; nearby ID numbers are not necessarily semantically related.
+- A tokenizer can be multilingual when its vocabulary and training data cover multiple languages, scripts, symbols, code, punctuation, and other domains.
+- Tokenization efficiency varies by language and domain.
+- More tokens for the same text use more context, add inference work, increase latency, and can raise product cost.
+- The model predicts logits over the fixed vocabulary.
+- Softmax converts logits into probabilities.
+- High-level autoregressive loop: `token IDs -> logits -> probabilities -> next token ID -> append to context -> repeat`.
 
 ### 02 - Embeddings
 
@@ -41,27 +40,32 @@ Milestone 1: Understanding token-by-token inference.
 
 - Weight tying.
 - Why related tokens become geometrically close.
+- Why words in different languages can end up close in embedding space.
 - How magnitude and direction are both useful.
-- Quantization impact on embeddings/lm_head.
 - Practical trade-off between larger vocabularies and fewer tokens.
+- Quantization impact on embeddings/lm_head.
 
 ## Open questions
 
+- How does a token ID become a vector?
+- Why can embeddings encode semantic similarity?
+- Why can words in different languages end up close in embedding space?
+- What is the difference between prefill and decode in the autoregressive loop?
+- Why does output vocabulary size affect the final projection and softmax cost?
 - How does the model know the order of tokens?
 - Why do "dog bites man" and "man bites dog" differ?
 - How do embeddings become contextual?
 - How do tokens interact with each other?
 - What is positional information?
 - Later, what exactly is stored in KV cache?
-- Later, why is decode slower than prefill?
 - Later, how does quantization affect quality?
 
 ## Next concrete step
 
-Study Lesson 03: Positional Information.
+Embeddings: token IDs -> learned vectors.
 
 Goal:
 
-- Understand why token embeddings alone are not enough.
-- Introduce positional embeddings conceptually.
-- Prepare for the first transformer block overview.
+- Understand why token ID numbers are not passed directly as meaningful numeric values.
+- Learn embedding lookup: `x = E[token_id]`.
+- Connect tokenization to the next stage of the inference pipeline.

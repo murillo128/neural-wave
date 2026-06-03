@@ -8,3 +8,8 @@ Key requirements captured:
 - C++17/CMake tokenizer visualizer with simple + BPE modes.
 - Deterministic tiny vocab/merges and tests.
 - Educational, readable implementation over production fidelity.
+
+
+## Follow-up learning update
+
+This task updated the learning notes after the session on token IDs, fixed vocabularies, multilingual tokenization, next-token inference, and logits/softmax at a conceptual level.

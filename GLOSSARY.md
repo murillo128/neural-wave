@@ -4,13 +4,29 @@
 
 A unit of text consumed by a language model.
 
+## Tokenizer
+
+A component that converts text into tokens and token IDs.
+
+## Detokenization
+
+Converting token IDs or tokens back into text, when the tokenization scheme preserves enough information.
+
 ## Vocabulary
 
-The set of tokens a model can represent, each mapped to a token ID.
+The fixed set of tokens known by a tokenizer/model pair.
+
+## Vocab size
+
+The number of tokens in the vocabulary.
 
 ## Token ID
 
-An arbitrary integer representing a token in a vocabulary.
+An arbitrary integer index for a token in the vocabulary.
+
+## Multilingual tokenizer
+
+A tokenizer whose vocabulary covers text patterns from multiple languages, scripts, and domains.
 
 ## Embedding
 
@@ -23,10 +39,6 @@ A learned matrix with shape `vocab_size x hidden_size`. Each row contains the em
 ## Embedding lookup
 
 The operation of selecting an embedding table row by token ID: `x = E[token_id]`.
-
-## `vocab_size`
-
-The number of tokens in the vocabulary.
 
 ## `hidden_size`
 
@@ -52,13 +64,25 @@ A normalized vector similarity score: `(a · b) / (||a|| * ||b||)`, focused most
 
 The output projection that maps a final hidden vector to logits over the vocabulary.
 
-## Logits
+## Logit
 
-Raw, unnormalized scores for each possible next token before softmax.
+A raw, unnormalized score for a possible next token before softmax.
 
 ## Softmax
 
 A function that converts logits into probabilities that sum to 1.
+
+## Sampling
+
+Choosing a next token from the probability distribution instead of always taking the top token.
+
+## Greedy decoding
+
+Choosing the highest-probability next token at each generation step.
+
+## Autoregressive generation
+
+Generating one token at a time by conditioning on previous tokens and appending each selected token to the context.
 
 ## Weight tying
 
@@ -83,36 +107,3 @@ Stored key/value attention states used to speed generation.
 ## Quantization
 
 Reducing numeric precision of weights/activations for efficiency.
-
-## Tokenizer
-A component that converts text into tokens and token IDs.
-
-## Detokenizer
-A component that converts token IDs or tokens back into text.
-
-## Vocabulary
-The fixed set of tokens known by a tokenizer/model pair.
-
-## Vocab size
-The number of tokens in the vocabulary.
-
-## Logit
-An unnormalized score for a possible next token.
-
-## Softmax
-A function that converts logits into probabilities that sum to 1.
-
-## Sampling
-Choosing a next token from the probability distribution.
-
-## Greedy decoding
-Choosing the highest-probability next token at each step.
-
-## Autoregressive generation
-Generating one token at a time by appending each selected token to the context.
-
-## Embedding
-A learned vector representation for a token ID.
-
-## Embedding table
-A learned lookup table that maps token IDs to embedding vectors.
