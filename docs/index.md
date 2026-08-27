@@ -1,59 +1,48 @@
 # Neural Wave
 
-A lightweight LLM learning book with small C++ labs.
+Neural Wave is a conceptual reference for understanding large language models: what the main mechanisms are, why they work, how they fit together, and where the mathematics is useful.
 
-This project is designed to build deep intuition about language models without trying to master every layer before touching the next one.
+The repository is intentionally organized as an evolving knowledge base rather than a course with exercises.
 
----
+## The core computational spine
 
-## Learning approach
-
-We learn in a spiral:
-
-1. See the concept simply.
-2. Build a tiny lab.
-3. Return later with more mathematical depth.
-4. Connect the concept to inference, training, serving, and product impact.
-
-!!! note "Book + lab"
-    The lessons are the book. The C++ labs are small executable experiments that make each idea concrete.
-
----
-
-## Current milestone
-
-**Understanding token-by-token inference.**
+A decoder-only language model can be viewed at first pass as this pipeline:
 
 ```text
 text
-  -> tokens
+  -> tokenizer
   -> token IDs
-  -> embeddings
-  -> token + position vectors
+  -> embedding vectors
+  -> residual stream
   -> transformer blocks
+       - attention: communication across positions
+       - MLP: transformation within each position
+       - normalization + residual updates
+  -> final hidden representation
+  -> vocabulary projection (lm_head)
   -> logits
-  -> probabilities
+  -> decoding
   -> next token
 ```
 
----
+Training determines the weights that make those transformations useful. Post-training changes how the learned model behaves. Retrieval, tools, agents, and external memory add systems around the base model rather than changing this basic spine.
 
-## Current chapters
+## Current conceptual pages
 
-1. [01 - Tokenization](lessons/01-tokenization.md)
-2. [02 - Embeddings](lessons/02-embeddings.md)
-3. [03 - Positional Information](lessons/03-positional-information.md)
+### Foundations
 
-## Current labs
+- [Tokenization](foundations/tokenization.md) — how text becomes discrete model symbols and why tokenization affects the rest of the system.
+- [Embeddings and Representation Geometry](foundations/embeddings-and-representation-geometry.md) — how arbitrary token IDs become learned vectors and how to think about vector geometry without over-interpreting it.
 
-1. [01 - Tokenizer Visualizer](labs/01-tokenizer-visualizer.md)
-2. [02 - Embedding Lookup](labs/02-embedding-lookup.md)
-3. [03 - Positional Embeddings](labs/03-positional-embeddings.md)
+### Transformer core
 
----
+- [Positional Information](transformers/positional-information.md) — why order must enter the computation and how absolute position, sinusoidal methods, RoPE, and attention biases differ conceptually.
+- [Transformer Block and Residual Stream](transformers/transformer-block.md) — the outside view of attention, MLPs, normalization, residual connections, and contextual representations.
 
-## Boundaries
+## How to use the reference
 
-We are not yet explaining attention internals, Q/K/V, KV cache internals, RoPE mathematics, training, fine-tuning, RAG, quantization, batching, or serving.
+Do not wait to finish all of linear algebra, probability, optimization, or transformer internals before looking at the whole model. Start with the mechanism you need, build a useful mental model, then revisit it when another part of the system creates a reason to go deeper.
 
-Those topics come later, after the first token-to-vector pipeline is solid.
+The [Learning Map](learning-map.md) shows the wider field and the current depth of coverage. It is descriptive, not a task checklist. The [Glossary](glossary.md) is useful when a term appears before its dedicated treatment.
+
+Practical infrastructure, benchmarks, hardware experiments, implementation labs, and deployment workflows are intentionally outside the scope of this repository except when a small practical consequence helps explain a concept.

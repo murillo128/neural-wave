@@ -1,5 +1,5 @@
 site_name: Neural Wave
-site_description: A lightweight LLM learning book with C++ labs
+site_description: A structured conceptual reference for understanding LLMs
 site_url: https://murillo128.github.io/neural-wave/
 
 repo_name: murillo128/neural-wave
@@ -62,17 +62,10 @@ extra_css:
 nav:
   - Home: index.md
   - Learning Map: learning-map.md
-  - Lessons:
-      - 00 - How to read this repo: lessons/00-how-to-read-this-repo.md
-      - 01 - Tokenization: lessons/01-tokenization.md
-      - 02 - Embeddings: lessons/02-embeddings.md
-      - 03 - Positional Information: lessons/03-positional-information.md
-  - Upcoming Lessons:
-      - 04 - Transformer Block from the Outside: lessons/04-transformer-block-from-the-outside.md
-  - Labs:
-      - Labs Overview: labs/index.md
-      - 01 - Tokenizer Visualizer: labs/01-tokenizer-visualizer.md
-      - 02 - Embedding Lookup: labs/02-embedding-lookup.md
-      - 03 - Positional Embeddings: labs/03-positional-embeddings.md
+  - Foundations:
+      - Tokenization: foundations/tokenization.md
+      - Embeddings & Representation Geometry: foundations/embeddings-and-representation-geometry.md
+  - Transformer Core:
+      - Positional Information: transformers/positional-information.md
+      - Transformer Block & Residual Stream: transformers/transformer-block.md
   - Glossary: glossary.md
-  - Questions: questions.md
