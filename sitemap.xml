@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+    <url>
+         <loc>https://murillo128.github.io/neural-wave/</loc>
+         <lastmod>2026-08-27</lastmod>
+    </url>
+    <url>
+         <loc>https://murillo128.github.io/neural-wave/glossary/</loc>
+         <lastmod>2026-08-27</lastmod>
+    </url>
+    <url>
+         <loc>https://murillo128.github.io/neural-wave/learning-map/</loc>
+         <lastmod>2026-08-27</lastmod>
+    </url>
+    <url>
+         <loc>https://murillo128.github.io/neural-wave/foundations/embeddings-and-representation-geometry/</loc>
+         <lastmod>2026-08-27</lastmod>
+    </url>
+    <url>
+         <loc>https://murillo128.github.io/neural-wave/foundations/tokenization/</loc>
+         <lastmod>2026-08-27</lastmod>
+    </url>
+    <url>
+         <loc>https://murillo128.github.io/neural-wave/transformers/positional-information/</loc>
+         <lastmod>2026-08-27</lastmod>
+    </url>
+    <url>
+         <loc>https://murillo128.github.io/neural-wave/transformers/transformer-block/</loc>
+         <lastmod>2026-08-27</lastmod>
+    </url>
+</urlset>

@@ -1,0 +1,1177 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="A structured conceptual reference for understanding LLMs">
+      
+      
+      
+        <link rel="canonical" href="https://murillo128.github.io/neural-wave/transformers/transformer-block/">
+      
+      
+        <link rel="prev" href="../positional-information/">
+      
+      
+        <link rel="next" href="../../glossary/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
+    
+    
+      
+        <title>Transformer Block & Residual Stream - Neural Wave</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.ec1eaa64.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../stylesheets/extra.css">
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="black" data-md-color-accent="blue">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#transformer-block-and-residual-stream" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="Neural Wave" class="md-header__button md-logo" aria-label="Neural Wave" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Neural Wave
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Transformer Block & Residual Stream
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="black" data-md-color-accent="blue"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m17.75 4.09-2.53 1.94.91 3.06-2.63-1.81-2.63 1.81.91-3.06-2.53-1.94L12.44 4l1.06-3 1.06 3zm3.5 6.91-1.64 1.25.59 1.98-1.7-1.17-1.7 1.17.59-1.98L15.75 11l2.06-.05L18.5 9l.69 1.95zm-2.28 4.95c.83-.08 1.72 1.1 1.19 1.85-.32.45-.66.87-1.08 1.27C15.17 23 8.84 23 4.94 19.07c-3.91-3.9-3.91-10.24 0-14.14.4-.4.82-.76 1.27-1.08.75-.53 1.93.36 1.85 1.19-.27 2.86.69 5.83 2.89 8.02a9.96 9.96 0 0 0 8.02 2.89m-1.64 2.02a12.08 12.08 0 0 1-7.8-3.47c-2.17-2.19-3.33-5-3.49-7.82-2.81 3.14-2.7 7.96.31 10.98 3.02 3.01 7.84 3.12 10.98.31"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="black" data-md-color-accent="blue"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 7a5 5 0 0 1 5 5 5 5 0 0 1-5 5 5 5 0 0 1-5-5 5 5 0 0 1 5-5m0 2a3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0 3-3 3 3 0 0 0-3-3m0-7 2.39 3.42C13.65 5.15 12.84 5 12 5s-1.65.15-2.39.42zM3.34 7l4.16-.35A7.2 7.2 0 0 0 5.94 8.5c-.44.74-.69 1.5-.83 2.29zm.02 10 1.76-3.77a7.131 7.131 0 0 0 2.38 4.14zM20.65 7l-1.77 3.79a7.02 7.02 0 0 0-2.38-4.15zm-.01 10-4.14.36c.59-.51 1.12-1.14 1.54-1.86.42-.73.69-1.5.83-2.29zM12 22l-2.41-3.44c.74.27 1.55.44 2.41.44.82 0 1.63-.17 2.37-.44z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/murillo128/neural-wave" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    murillo128/neural-wave
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="Neural Wave" class="md-nav__button md-logo" aria-label="Neural Wave" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    Neural Wave
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/murillo128/neural-wave" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    murillo128/neural-wave
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../learning-map/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Learning Map
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Foundations
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Foundations
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../foundations/tokenization/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Tokenization
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../foundations/embeddings-and-representation-geometry/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Embeddings & Representation Geometry
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Transformer Core
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Transformer Core
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../positional-information/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Positional Information
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Transformer Block & Residual Stream
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Transformer Block & Residual Stream
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#the-outside-view" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The outside view
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#residual-stream-a-shared-representational-workspace" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Residual stream: a shared representational workspace
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#attention-communication-across-positions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Attention: communication across positions
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Attention: communication across positions">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#causal-attention" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Causal attention
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#mlp-transformation-within-a-position" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        MLP: transformation within a position
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#normalization-controlling-scale" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Normalization: controlling scale
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#positional-information-enters-the-interaction" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Positional information enters the interaction
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#why-representations-become-contextual" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Why representations become contextual
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#multi-head-attention" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Multi-head attention
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#architectural-variations" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Architectural variations
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#connection-to-inference" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Connection to inference
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#connection-to-the-output" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Connection to the output
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../glossary/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Glossary
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#the-outside-view" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The outside view
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#residual-stream-a-shared-representational-workspace" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Residual stream: a shared representational workspace
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#attention-communication-across-positions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Attention: communication across positions
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Attention: communication across positions">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#causal-attention" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Causal attention
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#mlp-transformation-within-a-position" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        MLP: transformation within a position
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#normalization-controlling-scale" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Normalization: controlling scale
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#positional-information-enters-the-interaction" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Positional information enters the interaction
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#why-representations-become-contextual" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Why representations become contextual
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#multi-head-attention" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Multi-head attention
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#architectural-variations" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Architectural variations
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#connection-to-inference" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Connection to inference
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#connection-to-the-output" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Connection to the output
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="transformer-block-and-residual-stream">Transformer Block and Residual Stream<a class="headerlink" href="#transformer-block-and-residual-stream" title="Permanent link">&para;</a></h1>
+<p>A transformer block is best understood first as a structured update to a sequence of hidden vectors.</p>
+<p>If the input has <span class="arithmatex">\(T\)</span> token positions and hidden width <span class="arithmatex">\(d\)</span>, then</p>
+<div class="arithmatex">\[
+X\in\mathbb{R}^{T\times d}
+\]</div>
+<p>enters the block and a matrix of the same shape usually leaves it:</p>
+<div class="arithmatex">\[
+Y\in\mathbb{R}^{T\times d}.
+\]</div>
+<p>The values change; the basic sequence shape does not.</p>
+<h2 id="the-outside-view">The outside view<a class="headerlink" href="#the-outside-view" title="Permanent link">&para;</a></h2>
+<p>A common modern decoder-only, pre-normalization block can be sketched as</p>
+<div class="arithmatex">\[
+A = \mathrm{Attention}(\mathrm{Norm}(X))
+\]</div>
+<div class="arithmatex">\[
+X' = X + A
+\]</div>
+<div class="arithmatex">\[
+M = \mathrm{MLP}(\mathrm{Norm}(X'))
+\]</div>
+<div class="arithmatex">\[
+Y = X' + M.
+\]</div>
+<p>Architectures vary, but this schematic exposes the main roles:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>residual stream X
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>      |
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>      +-&gt; norm -&gt; attention -&gt; additive update
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>      |
+<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>      v
+<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>residual stream X'
+<a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>      |
+<a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>      +-&gt; norm -&gt; MLP -&gt; additive update
+<a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>      |
+<a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>      v
+<a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a>residual stream Y
+</code></pre></div>
+<p>The block does not have one monolithic job. Attention, MLPs, normalization, and residual connections solve different problems.</p>
+<h2 id="residual-stream-a-shared-representational-workspace">Residual stream: a shared representational workspace<a class="headerlink" href="#residual-stream-a-shared-representational-workspace" title="Permanent link">&para;</a></h2>
+<p>The <strong>residual stream</strong> is the evolving hidden vector at every token position as it passes through the stack.</p>
+<p>A residual connection updates a state as</p>
+<div class="arithmatex">\[
+x \leftarrow x + \Delta x
+\]</div>
+<p>rather than replacing <span class="arithmatex">\(x\)</span> completely.</p>
+<p>That creates a useful mental model: each sublayer reads the current representation, computes an update, and writes that update back into a shared workspace.</p>
+<p>Across many layers:</p>
+<div class="arithmatex">\[
+X^{(0)} \rightarrow X^{(1)} \rightarrow \cdots \rightarrow X^{(L)}.
+\]</div>
+<p>Earlier information can remain available while new features are added, removed, amplified, rotated, or combined. This also makes deep networks easier to optimize because each layer can learn a correction around an identity path instead of having to reconstruct the entire representation from scratch.</p>
+<h2 id="attention-communication-across-positions">Attention: communication across positions<a class="headerlink" href="#attention-communication-across-positions" title="Permanent link">&para;</a></h2>
+<p>Before attention, every token position has its own vector. Attention is the component that allows one position to read information from other positions.</p>
+<p>At a high level, each position creates three learned projections:</p>
+<ul>
+<li><strong>query (Q)</strong> — what information am I looking for?</li>
+<li><strong>key (K)</strong> — what kinds of queries should match me?</li>
+<li><strong>value (V)</strong> — what information should be transferred if I am selected?</li>
+</ul>
+<p>Queries are compared with keys, producing attention weights. Those weights determine how values from different positions are combined.</p>
+<p>The core pattern is</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>current representation
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>   -&gt; Q/K/V projections
+<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>   -&gt; compare Q with K
+<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>   -&gt; normalize match scores
+<a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>   -&gt; weighted mixture of V
+<a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a>   -&gt; attention update
+</code></pre></div>
+<p>A deeper pass will formalize</p>
+<div class="arithmatex">\[
+\mathrm{softmax}\left(\frac{QK^T}{\sqrt{d_k}} + \text{mask}\right)V,
+\]</div>
+<p>but the important first intuition is <strong>routing information according to content-dependent matches</strong>.</p>
+<h3 id="causal-attention">Causal attention<a class="headerlink" href="#causal-attention" title="Permanent link">&para;</a></h3>
+<p>A decoder-only model predicting the next token must not read future tokens. A causal mask therefore restricts position <span class="arithmatex">\(i\)</span> to positions at or before <span class="arithmatex">\(i\)</span>.</p>
+<p>During training, many next-token predictions can still be computed in parallel because the mask enforces the dependency structure mathematically. During autoregressive generation, future positions genuinely do not exist yet, so new tokens are produced sequentially in the basic decoding loop.</p>
+<h2 id="mlp-transformation-within-a-position">MLP: transformation within a position<a class="headerlink" href="#mlp-transformation-within-a-position" title="Permanent link">&para;</a></h2>
+<p>Attention moves information between positions. The MLP performs a nonlinear transformation independently at each position using the same learned weights.</p>
+<p>Conceptually:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>position i vector
+<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>   -&gt; expand/project features
+<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>   -&gt; nonlinearity / gating
+<a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>   -&gt; project back to hidden size
+<a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>   -&gt; additive residual update
+</code></pre></div>
+<p>A simple feed-forward form is</p>
+<div class="arithmatex">\[
+\mathrm{MLP}(x)=W_2\,\sigma(W_1x),
+\]</div>
+<p>while modern LLMs commonly use gated variants such as SwiGLU.</p>
+<p>The crucial contrast is:</p>
+<ul>
+<li><strong>attention</strong> changes a token representation using information from other positions;</li>
+<li><strong>MLP</strong> changes it using learned feature transformations at that position.</li>
+</ul>
+<p>This is why an MLP can hold a large fraction of model parameters even though it does not directly mix tokens.</p>
+<h2 id="normalization-controlling-scale">Normalization: controlling scale<a class="headerlink" href="#normalization-controlling-scale" title="Permanent link">&para;</a></h2>
+<p>Deep residual updates can make activation scales drift. Normalization layers such as LayerNorm or RMSNorm rescale hidden states into a better-conditioned regime for the next learned transformation.</p>
+<p>A useful first intuition is not "normalization contains knowledge" but:</p>
+<blockquote>
+<p>normalization keeps the numerical geometry of the residual stream in a range where attention and MLP projections remain trainable and predictable.</p>
+</blockquote>
+<p>Modern decoder LLMs often use RMSNorm and pre-norm layouts, but there are important variants.</p>
+<h2 id="positional-information-enters-the-interaction">Positional information enters the interaction<a class="headerlink" href="#positional-information-enters-the-interaction" title="Permanent link">&para;</a></h2>
+<p>Attention based only on token content would still need a way to know order. Position can be added to the residual representation or injected into the attention calculation.</p>
+<p>With RoPE, for example, the query/key vectors are rotated according to token position before their dot products are computed. That means position changes which tokens match strongly even when their content features are similar.</p>
+<p>See <a href="../positional-information/">Positional Information</a>.</p>
+<h2 id="why-representations-become-contextual">Why representations become contextual<a class="headerlink" href="#why-representations-become-contextual" title="Permanent link">&para;</a></h2>
+<p>Suppose the initial representation of <code>bank</code> is the same vocabulary embedding in two sentences.</p>
+<p>After attention, the <code>bank</code> position can read features from nearby words such as <code>river</code> or <code>central</code>. The MLP can then transform the resulting combined features. Repeating this across layers creates different hidden trajectories:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>"river bank"     -&gt; bank representation shaped by river context
+<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>"central bank"   -&gt; bank representation shaped by financial context
+</code></pre></div>
+<p>Contextualization is therefore not a separate lookup table. It is the cumulative result of many content-dependent residual updates.</p>
+<h2 id="multi-head-attention">Multi-head attention<a class="headerlink" href="#multi-head-attention" title="Permanent link">&para;</a></h2>
+<p>One attention operation does not need to represent every relationship in one similarity space. Multi-head attention uses several sets of projections so different heads can create different matching geometries.</p>
+<p>One head might become useful for local syntactic relationships, another for copying or induction-like patterns, another for longer-range dependencies. These descriptions are tendencies, not fixed human-assigned jobs.</p>
+<p>Modern architectures may share K/V projections across heads through MQA or GQA to reduce inference memory while retaining many query heads.</p>
+<h2 id="architectural-variations">Architectural variations<a class="headerlink" href="#architectural-variations" title="Permanent link">&para;</a></h2>
+<p>The conceptual block survives many implementation differences:</p>
+<ul>
+<li>LayerNorm versus RMSNorm;</li>
+<li>sequential versus parallel attention/MLP residual branches;</li>
+<li>standard MLP versus gated MLP;</li>
+<li>dense MLP versus MoE expert routing;</li>
+<li>full multi-head K/V versus GQA/MQA;</li>
+<li>different positional schemes;</li>
+<li>local, sliding-window, sparse, or hybrid attention;</li>
+<li>additional recurrent or state-space components.</li>
+</ul>
+<p>The right invariant to keep in mind is not one exact diagram. It is the repeated transformation of a residual representation through mechanisms that <strong>communicate</strong>, <strong>transform</strong>, and <strong>stabilize</strong> information.</p>
+<h2 id="connection-to-inference">Connection to inference<a class="headerlink" href="#connection-to-inference" title="Permanent link">&para;</a></h2>
+<p>The transformer block explains several inference concepts later in the map:</p>
+<ul>
+<li>the <strong>KV cache</strong> exists because attention keys and values for previous positions can be reused during decode;</li>
+<li>decode is sequential because each new token changes the context for the next prediction;</li>
+<li>MQA/GQA matter because sharing K/V reduces cache size;</li>
+<li>MoE changes which MLP-like parameters are active for each token;</li>
+<li>hidden size and sequence length determine activation shapes even when parameter storage is elsewhere.</li>
+</ul>
+<p>These are consequences of the architecture, not a separate serving theory.</p>
+<h2 id="connection-to-the-output">Connection to the output<a class="headerlink" href="#connection-to-the-output" title="Permanent link">&para;</a></h2>
+<p>After the final transformer layer, a final normalization is commonly applied and the hidden state for the relevant position is projected through the vocabulary head:</p>
+<div class="arithmatex">\[
+h \rightarrow W_{out}h \rightarrow logits.
+\]</div>
+<p>That closes the core loop:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>token IDs
+<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>  -&gt; initial representations
+<a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>  -&gt; repeated contextual residual updates
+<a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>  -&gt; final hidden state
+<a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a>  -&gt; vocabulary logits
+<a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a>  -&gt; next-token decision
+</code></pre></div>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.sections", "navigation.expand", "navigation.top", "navigation.indexes", "toc.follow", "search.suggest", "search.highlight", "content.code.copy", "content.code.select"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.d7400e89.min.js"></script>
+      
+        <script src="../../javascripts/mathjax.js"></script>
+      
+        <script src="https://unpkg.com/mathjax@3/es5/tex-mml-chtml.js"></script>
+      
+    
+  </body>
+</html>
